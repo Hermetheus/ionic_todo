@@ -4,8 +4,17 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content> 
-  <ion-button (click)="onLogin()" expand="block" fill="clear" shape="round" color="primary">
+<ion-content class="ion-padding">
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">E-mail</ion-label>
+      <ion-input></ion-input>
+    </ion-item>
+  </ion-list>
+  <!-- <div class="ion-text-center">
+    <ion-spinner name="lines" *ngIf="isLoading"></ion-spinner>
+  </div> -->
+  <ion-button (click)="onLogin()" fill="clear" color="primary">
     Login
   </ion-button>
 </ion-content>

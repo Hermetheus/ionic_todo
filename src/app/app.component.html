@@ -4,6 +4,10 @@
       <ion-toolbar>
         <ion-title>BookingBnB</ion-title>
       </ion-toolbar>
+      <ion-item lines="none">
+        Toggle Light/Dark Mode
+        <ion-toggle (ionChange)="onClick($event)" slot="end"></ion-toggle>
+      </ion-item>
     </ion-header>
     <ion-content>
       <ion-list>
