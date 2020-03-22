@@ -28,15 +28,22 @@ export class EditOfferPage implements OnInit {
       }
       this.place = this.placesService.getPlace(paramMap.get('placeId'));
       this.form = new FormGroup({
-        title: new FormControl(null, {
+        title: new FormControl(this.place.title, {
           updateOn: 'blur',
           validators: [Validators.required]
         }),
-        description: new FormControl(null, {
+        description: new FormControl(this.place.description, {
           updateOn: 'blur',
           validators: [Validators.required, Validators.maxLength(180)]
         })
       });
     });
+  }
+
+  onUpdateOffer() {
+    if (!this.form.valid) {
+      return;
+    }
+    console.log(this.form);
   }
 }

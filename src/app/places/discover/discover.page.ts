@@ -23,6 +23,10 @@ export class DiscoverPage implements OnInit {
     this.listedLoadedPlaces = this.loadedPlaces.slice(1);
   }
 
+  ionViewDidEnter() {
+    this.loadedPlaces = this.placesService.places;
+  }
+
   onOpenMenu() {
     this.menuCtrl.toggle();
   }

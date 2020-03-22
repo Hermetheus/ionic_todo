@@ -6,6 +6,11 @@
       ></ion-back-button>
     </ion-buttons>
     <ion-title>Edit: {{ place.title }}</ion-title>
+    <ion-buttons slot="primary">
+      <ion-button (click)="onUpdateOffer()" [disabled]="!form.valid">
+        <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+      </ion-button>
+    </ion-buttons>
   </ion-toolbar>
 </ion-header>
 
