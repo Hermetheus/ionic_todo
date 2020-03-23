@@ -1,12 +1,15 @@
 import { AuthService } from './auth/auth.service';
 import { Place } from './places/place.module';
 import { Injectable } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
+import { take, map, tap, delay } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PlacesService {
-  private _places: Place[] = [
+  // tslint:disable-next-line: variable-name
+  private _places = new BehaviorSubject<Place[]>([
     // tslint:disable-next-line: max-line-length
     new Place(
       'p1',
@@ -23,6 +26,7 @@ export class PlacesService {
       'p2',
       'Trailor',
       'Some place',
+      // tslint:disable-next-line: max-line-length
       'https://storage.bhs.cloud.ovh.net/v1/AUTH_e7d15450bedd40b9b599e075527df3cb/loz/fOLDER_MOBILE_HOME__Trailer_House__1500_S_5b344eac05591.jpg',
       49.99,
       new Date('2019-01-01'),
@@ -40,16 +44,21 @@ export class PlacesService {
       new Date('2019-12-31'),
       'abc'
     )
-  ];
+  ]);
 
   get places() {
-    return [...this._places];
+    return this._places.asObservable();
   }
 
   constructor(private authService: AuthService) {}
 
   getPlace(id: string) {
-    return { ...this._places.find(p => p.id === id) };
+    return this.places.pipe(
+      take(1),
+      map(places => {
+        return { ...places.find(p => p.id === id) };
+      })
+    );
   }
 
   addPlace(
@@ -69,6 +78,12 @@ export class PlacesService {
       dateTo,
       this.authService.userId
     );
-    this._places.push(newPlace);
+    return this.places.pipe(
+      take(1),
+      delay(1000),
+      tap(places => {
+        this._places.next(places.concat(newPlace));
+      })
+    );
   }
 }
