@@ -1,3 +1,4 @@
+import { BookingService } from './../../../bookings/booking.service';
 import { Subscription } from 'rxjs';
 import { CreateBookingComponent } from './../../../bookings/create-booking/create-booking.component';
 import { Place } from './../../place.module';
@@ -7,7 +8,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import {
   NavController,
   ModalController,
-  ActionSheetController
+  ActionSheetController,
+  LoadingController
 } from '@ionic/angular';
 
 @Component({
@@ -24,7 +26,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private placesService: PlacesService,
     private navCtrl: NavController,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private bookingService: BookingService,
+    private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
@@ -86,10 +90,28 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         return modalEl.onDidDismiss();
       })
       .then(resultData => {
-        console.log(resultData.data, resultData.role);
-        if (resultData.role === 'confirm') {
-          console.log('Booked!');
-        }
+        this.loadingCtrl
+          .create({
+            message: 'Booking place...'
+          })
+          .then(loadingEl => {
+            loadingEl.present();
+            const data = resultData.data.bookingData;
+            this.bookingService
+              .addBooking(
+                this.place.id,
+                this.place.title,
+                this.place.imageUrl,
+                data.firstName,
+                data.lastName,
+                data.guestNumber,
+                data.startDate,
+                data.endDate
+              )
+              .subscribe(() => {
+                loadingEl.dismiss();
+              });
+          });
       });
   }
   ngOnDestroy() {
