@@ -1,3 +1,4 @@
+import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth/auth.service';
 import { Place } from './places/place.module';
 import { Injectable } from '@angular/core';
@@ -50,7 +51,7 @@ export class PlacesService {
     return this._places.asObservable();
   }
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   getPlace(id: string) {
     return this.places.pipe(
@@ -78,13 +79,23 @@ export class PlacesService {
       dateTo,
       this.authService.userId
     );
-    return this.places.pipe(
-      take(1),
-      delay(1000),
-      tap(places => {
-        this._places.next(places.concat(newPlace));
-      })
-    );
+    return this.http
+      .post(
+        'https://ionic-booking-app-a32f9.firebaseio.com/offered-places.json',
+        { ...newPlace, id: null }
+      )
+      .pipe(
+        tap(resData => {
+          console.log(resData);
+        })
+      );
+    // return this.places.pipe(
+    //   take(1),
+    //   delay(1000),
+    //   tap(places => {
+    //     this._places.next(places.concat(newPlace));
+    //   })
+    // );
   }
 
   updatePlace(placeId: string, title: string, description: string) {
