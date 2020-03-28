@@ -63,7 +63,7 @@
             <ion-button
               color="primary"
               fill="clear"
-              [routerLink]="['/', 'places', 'tabs', 'discover', relevantPlaces[0].id]"
+              [routerLink]="['/', 'places', 'tabs', 'discover', relevantPlaces[0]?.id]"
             >
               More
             </ion-button>
@@ -78,7 +78,7 @@
           approxItemHeight="70px"
         >
           <ion-item
-            [routerLink]="['/', 'places', 'tabs', 'discover', place.id]"
+            [routerLink]="['/', 'places', 'tabs', 'discover', place?.id]"
             detail
             *virtualItem="let place"
           >
