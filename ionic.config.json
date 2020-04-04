@@ -1,5 +1,7 @@
 {
   "name": "booking_app",
-  "integrations": {},
+  "integrations": {
+    "capacitor": {}
+  },
   "type": "angular"
 }

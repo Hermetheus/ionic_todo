@@ -1,0 +1,2 @@
+"$basedir/node_modules/@npmcli/installed-package-contents/index.js"   "$@"
+exit $?

@@ -11,7 +11,7 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 export class CreateBookingComponent implements OnInit {
   @Input() selectedPlace: Place;
   @Input() selectedMode: 'select' | 'random';
-  @ViewChild('f', { static: false }) form: NgForm;
+  @ViewChild('f') form: NgForm;
   startDate: string;
   endDate: string;
 
