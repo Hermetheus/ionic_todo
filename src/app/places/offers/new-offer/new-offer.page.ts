@@ -48,7 +48,15 @@ export class NewOfferPage implements OnInit {
   }
 
   onLocationPicked(location: PlaceLocation) {
-    this.form.patchValue({ location: location });
+    this.form.patchValue({
+      _location: location,
+      get location() {
+        return this._location;
+      },
+      set location(value) {
+        this._location = value;
+      },
+    });
   }
 
   onCreateOffer() {

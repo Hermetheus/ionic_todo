@@ -8,6 +8,7 @@ import {
   ViewChild,
   ElementRef,
   Renderer2,
+  Input,
 } from '@angular/core';
 import {} from '../../../environments/environment';
 
@@ -18,6 +19,10 @@ import {} from '../../../environments/environment';
 })
 export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
+  @Input() center = { lat: -34.397, lng: 150.644 };
+  @Input() selectable = true;
+  @Input() closeButtonText = 'Cancel';
+  @Input() title = 'Pick a Place';
   clickListener: any;
   googleMaps: any;
 

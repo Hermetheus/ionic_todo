@@ -1,3 +1,4 @@
+import { MapModalComponent } from './../../../shared/map-modal/map-modal.component';
 import { AuthService } from './../../../auth/auth.service';
 import { BookingService } from './../../../bookings/booking.service';
 import { Subscription } from 'rxjs';
@@ -11,13 +12,13 @@ import {
   ModalController,
   ActionSheetController,
   LoadingController,
-  AlertController
+  AlertController,
 } from '@ionic/angular';
 
 @Component({
   selector: 'app-place-detail',
   templateUrl: './place-detail.page.html',
-  styleUrls: ['./place-detail.page.scss']
+  styleUrls: ['./place-detail.page.scss'],
 })
 export class PlaceDetailPage implements OnInit, OnDestroy {
   place: Place;
@@ -39,7 +40,7 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.route.paramMap.subscribe(paramMap => {
+    this.route.paramMap.subscribe((paramMap) => {
       if (!paramMap.has('placeId')) {
         this.navCtrl.navigateBack('/places/tabs/discover');
         return;
@@ -48,12 +49,12 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
       this.placeSub = this.placesService
         .getPlace(paramMap.get('placeId'))
         .subscribe(
-          place => {
+          (place) => {
             this.place = place;
             this.isBookable = place.userId !== this.authService.userId;
             this.isLoading = false;
           },
-          error => {
+          (error) => {
             this.alrtController
               .create({
                 header: 'An error occurred!',
@@ -63,11 +64,11 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
                     text: 'Okay',
                     handler: () => {
                       this.router.navigate(['/places/tabs/discover']);
-                    }
-                  }
-                ]
+                    },
+                  },
+                ],
               })
-              .then(alertEl => alertEl.present());
+              .then((alertEl) => alertEl.present());
           }
         );
     });
@@ -85,21 +86,21 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
             text: 'Select Date',
             handler: () => {
               this.openBookingModal('select');
-            }
+            },
           },
           {
             text: 'Random Date',
             handler: () => {
               this.openBookingModal('random');
-            }
+            },
           },
           {
             text: 'Cancel',
-            role: 'cancel'
-          }
-        ]
+            role: 'cancel',
+          },
+        ],
       })
-      .then(actionSheetEl => {
+      .then((actionSheetEl) => {
         actionSheetEl.present();
       });
   }
@@ -110,19 +111,19 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         component: CreateBookingComponent,
         componentProps: {
           selectedPlace: this.place,
-          selectedMode: mode
-        }
+          selectedMode: mode,
+        },
       })
-      .then(modalEl => {
+      .then((modalEl) => {
         modalEl.present();
         return modalEl.onDidDismiss();
       })
-      .then(resultData => {
+      .then((resultData) => {
         this.loadingCtrl
           .create({
-            message: 'Booking place...'
+            message: 'Booking place...',
           })
-          .then(loadingEl => {
+          .then((loadingEl) => {
             loadingEl.present();
             const data = resultData.data.bookingData;
             this.bookingService
@@ -140,6 +141,16 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
                 loadingEl.dismiss();
               });
           });
+      });
+  }
+
+  onShowFullMap() {
+    this.modalCtrl
+      .create({
+        component: MapModalComponent,
+      })
+      .then((modalEl) => {
+        modalEl.present();
       });
   }
   ngOnDestroy() {
