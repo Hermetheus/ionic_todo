@@ -7,14 +7,14 @@ import {
   AfterViewInit,
   ViewChild,
   ElementRef,
-  Renderer2
+  Renderer2,
 } from '@angular/core';
 import {} from '../../../environments/environment';
 
 @Component({
   selector: 'app-map-modal',
   templateUrl: './map-modal.component.html',
-  styleUrls: ['./map-modal.component.scss']
+  styleUrls: ['./map-modal.component.scss'],
 })
 export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('map', { static: false }) mapElementRef: ElementRef;
@@ -30,27 +30,27 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.getGoogleMaps()
-      .then(googleMaps => {
+      .then((googleMaps) => {
         this.googleMaps = googleMaps;
         const mapEl = this.mapElementRef.nativeElement;
         const map = new googleMaps.Map(mapEl, {
           center: { lat: -34.397, lng: 150.644 },
-          zoom: 16
+          zoom: 16,
         });
 
         googleMaps.event.addListenerOnce(map, 'idle', () => {
           this.renderer.addClass(mapEl, 'visible');
         });
 
-        this.clickListener = map.addListener('click', event => {
+        this.clickListener = map.addListener('click', (event) => {
           const selectedCoords = {
             lat: event.latLng.lat(),
-            lng: event.latLng.lng()
+            lng: event.latLng.lng(),
           };
           this.modalCtrl.dismiss(selectedCoords);
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.log(err);
       });
   }
@@ -60,7 +60,7 @@ export class MapModalComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.googleMaps.event.removeListner(this.clickListener);
+    this.googleMaps.event.removeListener(this.clickListener);
   }
 
   private getGoogleMaps(): Promise<any> {

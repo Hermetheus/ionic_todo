@@ -1,3 +1,4 @@
+import { PlaceLocation } from './places/location.model';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './auth/auth.service';
 import { Place } from './places/place.module';
@@ -50,10 +51,11 @@ interface PlaceData {
   price: number;
   title: string;
   userId: string;
+  location: PlaceLocation;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlacesService {
   // tslint:disable-next-line: variable-name
@@ -71,7 +73,7 @@ export class PlacesService {
         'https://ionic-booking-app-a32f9.firebaseio.com/offered-places.json'
       )
       .pipe(
-        map(resData => {
+        map((resData) => {
           const places = [];
           for (const key in resData) {
             if (resData.hasOwnProperty(key)) {
@@ -84,7 +86,8 @@ export class PlacesService {
                   resData[key].price,
                   new Date(resData[key].availableFrom),
                   new Date(resData[key].availableTo),
-                  resData[key].userId
+                  resData[key].userId,
+                  resData[key].location
                 )
               );
             }
@@ -92,7 +95,7 @@ export class PlacesService {
           return places;
           // return [];
         }),
-        tap(places => {
+        tap((places) => {
           this._places.next(places);
         })
       );
@@ -104,7 +107,7 @@ export class PlacesService {
         `https://ionic-booking-app-a32f9.firebaseio.com/offered-places/${id}.json`
       )
       .pipe(
-        map(placeData => {
+        map((placeData) => {
           return new Place(
             id,
             placeData.title,
@@ -113,7 +116,8 @@ export class PlacesService {
             placeData.price,
             new Date(placeData.availableFrom),
             new Date(placeData.availableTo),
-            placeData.userId
+            placeData.userId,
+            placeData.location
           );
         })
       );
@@ -124,7 +128,8 @@ export class PlacesService {
     description: string,
     price: number,
     dateFrom: Date,
-    dateTo: Date
+    dateTo: Date,
+    location: PlaceLocation
   ) {
     let generatedId: string;
     const newPlace = new Place(
@@ -135,7 +140,8 @@ export class PlacesService {
       price,
       dateFrom,
       dateTo,
-      this.authService.userId
+      this.authService.userId,
+      location
     );
     return this.http
       .post<{ name: string }>(
@@ -143,12 +149,12 @@ export class PlacesService {
         { ...newPlace, id: null }
       )
       .pipe(
-        switchMap(resData => {
+        switchMap((resData) => {
           generatedId = resData.name;
           return this.places;
         }),
         take(1),
-        tap(places => {
+        tap((places) => {
           newPlace.id = generatedId;
           this._places.next(places.concat(newPlace));
         })
@@ -166,15 +172,15 @@ export class PlacesService {
     let updatedPlaces: Place[];
     return this.places.pipe(
       take(1),
-      switchMap(places => {
+      switchMap((places) => {
         if (!places || places.length <= 0) {
           return this.fetchPlaces();
         } else {
           return of(places);
         }
       }),
-      switchMap(places => {
-        const updatedPlaceIndex = places.findIndex(pl => pl.id === placeId);
+      switchMap((places) => {
+        const updatedPlaceIndex = places.findIndex((pl) => pl.id === placeId);
         updatedPlaces = [...places];
         const oldPlace = updatedPlaces[updatedPlaceIndex];
         updatedPlaces[updatedPlaceIndex] = new Place(
@@ -185,7 +191,8 @@ export class PlacesService {
           oldPlace.price,
           oldPlace.availableFrom,
           oldPlace.availableTo,
-          oldPlace.userId
+          oldPlace.userId,
+          oldPlace.location
         );
         return this.http.put(
           `https://ionic-booking-app-a32f9.firebaseio.com/offered-places/${placeId}.json`,
