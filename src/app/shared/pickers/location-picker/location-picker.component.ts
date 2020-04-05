@@ -8,7 +8,7 @@ import {
   ActionSheetController,
   AlertController,
 } from '@ionic/angular';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 import { of } from 'rxjs/internal/observable/of';
 import { Plugins, Capacitor } from '@capacitor/core';
 
@@ -19,6 +19,7 @@ import { Plugins, Capacitor } from '@capacitor/core';
 })
 export class LocationPickerComponent implements OnInit {
   @Output() locationPick = new EventEmitter<PlaceLocation>();
+  @Input() showPreview = false;
   selectedLocationImage: string;
   isLoading = false;
 
