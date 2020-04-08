@@ -123,20 +123,32 @@ export class PlacesService {
       );
   }
 
+  uploadImage(image: File) {
+    const uploadData = new FormData();
+
+    uploadData.append('image', image);
+
+    return this.http.post<{ imageUrl: string; imagePath: string }>(
+      'https://us-central1-ionic-booking-app-a32f9.cloudfunctions.net/storeImage',
+      uploadData
+    );
+  }
+
   addPlace(
     title: string,
     description: string,
     price: number,
     dateFrom: Date,
     dateTo: Date,
-    location: PlaceLocation
+    location: PlaceLocation,
+    imageUrl: string
   ) {
     let generatedId: string;
     const newPlace = new Place(
       Math.random().toString(),
       title,
       description,
-      'https://cdnb.artstation.com/p/assets/images/images/018/412/489/4k/fernando-fleury-project-concept-v7.jpg?1559265146',
+      imageUrl,
       price,
       dateFrom,
       dateTo,

@@ -1,3 +1,4 @@
+import { switchMap } from 'rxjs/operators';
 import { PlaceLocation } from './../../location.model';
 import { LoadingController } from '@ionic/angular';
 import { Router } from '@angular/router';
@@ -111,13 +112,19 @@ export class NewOfferPage implements OnInit {
       .then((loadingEl) => {
         loadingEl.present();
         this.placesService
-          .addPlace(
-            this.form.value.title,
-            this.form.value.description,
-            +this.form.value.price,
-            new Date(this.form.value.dateFrom),
-            new Date(this.form.value.dateTo),
-            this.form.value.location
+          .uploadImage(this.form.get('image').value)
+          .pipe(
+            switchMap((uploadRes) => {
+              return this.placesService.addPlace(
+                this.form.value.title,
+                this.form.value.description,
+                +this.form.value.price,
+                new Date(this.form.value.dateFrom),
+                new Date(this.form.value.dateTo),
+                this.form.value.location,
+                uploadRes.imageUrl
+              );
+            })
           )
           .subscribe(() => {
             loadingEl.dismiss();
