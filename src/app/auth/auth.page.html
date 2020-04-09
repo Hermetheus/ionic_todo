@@ -64,12 +64,12 @@
           >
           <ion-button
             type="submit"
-            (click)="onLogin()"
+            (click)="authenticate()"
             color="primary"
             expand="block"
             [disabled]="!f.valid"
           >
-            Login
+            {{ !isLogin ? 'Signup' : 'Login' }}
           </ion-button>
         </ion-col>
       </ion-row>
