@@ -52,6 +52,10 @@ export class AuthPage implements OnInit {
             let message = 'Could not sign you up, please try again.';
             if (code === 'EMAIL_EXISTS') {
               message = 'This email address already exists!';
+            } else if (code === 'EMAIL_NOT_FOUND') {
+              message = 'Email address could not be found';
+            } else if (code === 'INVALID_PASSWORD') {
+              message = 'This password is not correct';
             }
             this.showAlert(message);
           }
