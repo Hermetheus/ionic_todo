@@ -9,6 +9,6 @@ import { BookingsPage } from './bookings.page';
 
 @NgModule({
   imports: [CommonModule, FormsModule, IonicModule, BookingsPageRoutingModule],
-  declarations: [BookingsPage]
+  declarations: [BookingsPage],
 })
 export class BookingsPageModule {}

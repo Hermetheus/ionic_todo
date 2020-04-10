@@ -6,12 +6,12 @@ import { Component, OnInit, Input, ViewChild } from '@angular/core';
 @Component({
   selector: 'app-create-booking',
   templateUrl: './create-booking.component.html',
-  styleUrls: ['./create-booking.component.scss']
+  styleUrls: ['./create-booking.component.scss'],
 })
 export class CreateBookingComponent implements OnInit {
   @Input() selectedPlace: Place;
   @Input() selectedMode: 'select' | 'random';
-  @ViewChild('f') form: NgForm;
+  @ViewChild('f', { static: true }) form: NgForm;
   startDate: string;
   endDate: string;
 
@@ -55,8 +55,8 @@ export class CreateBookingComponent implements OnInit {
           lastName: this.form.value['last-name'],
           guestNumber: +this.form.value['guest-number'],
           startDate: new Date(this.form.value['date-from']),
-          endDate: new Date(this.form.value['date-to'])
-        }
+          endDate: new Date(this.form.value['date-to']),
+        },
       },
       'confirm'
     );
