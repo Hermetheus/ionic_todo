@@ -40,34 +40,41 @@ export class BookingService {
     dateFrom: Date,
     dateTo: Date
   ) {
-    const newBooking = new Booking(
-      Math.random().toString(),
-      placeId,
-      this.authService.userId,
-      placeTitle,
-      placeImage,
-      firstName,
-      lastName,
-      guestNumber,
-      dateFrom,
-      dateTo
+    let newBooking: Booking;
+
+    return this.authService.userId.pipe(
+      take(1),
+      switchMap((userId) => {
+        if (!userId) {
+          throw new Error('No user id found!');
+        }
+        newBooking = new Booking(
+          Math.random().toString(),
+          placeId,
+          userId,
+          placeTitle,
+          placeImage,
+          firstName,
+          lastName,
+          guestNumber,
+          dateFrom,
+          dateTo
+        );
+        return this.http.post<{ name: string }>(
+          'https://ionic-booking-app-a32f9.firebaseio.com/bookings.json',
+          { ...newBooking, id: null }
+        );
+      }),
+      switchMap((resData) => {
+        this.generatedId = resData.name;
+        return this.bookings;
+      }),
+      take(1),
+      tap((bookings) => {
+        newBooking.id = this.generatedId;
+        this._bookings.next(bookings.concat(newBooking));
+      })
     );
-    return this.http
-      .post<{ name: string }>(
-        'https://ionic-booking-app-a32f9.firebaseio.com/bookings.json',
-        { ...newBooking, id: null }
-      )
-      .pipe(
-        switchMap(resData => {
-          this.generatedId = resData.name;
-          return this.bookings;
-        }),
-        take(1),
-        tap(bookings => {
-          newBooking.id = this.generatedId;
-          this._bookings.next(bookings.concat(newBooking));
-        })
-      );
   }
 
   cancelBooking(bookingId: string) {
@@ -80,8 +87,8 @@ export class BookingService {
           return this.bookings;
         }),
         take(1),
-        tap(bookings => {
-          this._bookings.next(bookings.filter(b => b.id !== bookingId));
+        tap((bookings) => {
+          this._bookings.next(bookings.filter((b) => b.id !== bookingId));
         })
       );
   }
@@ -92,7 +99,7 @@ export class BookingService {
         `https://ionic-booking-app-a32f9.firebaseio.com/bookings.json?orderBy="userId"&equalTo="${this.authService.userId}"`
       )
       .pipe(
-        map(bookingData => {
+        map((bookingData) => {
           const bookings = [];
           for (const key in bookingData) {
             if (bookingData.hasOwnProperty(key)) {
@@ -114,7 +121,7 @@ export class BookingService {
           }
           return bookings;
         }),
-        tap(bookings => {
+        tap((bookings) => {
           this._bookings.next(bookings);
         })
       );

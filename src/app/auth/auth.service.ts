@@ -22,23 +22,23 @@ export class AuthService {
   // tslint:disable-next-line: variable-name
   private _user = new BehaviorSubject<User>(null);
 
-  get userId() {
-    return this._user.asObservable().pipe(
-      map((user) => {
-        if (user) {
-          return user.id;
-        } else {
-          return false;
-        }
-      })
-    );
-  }
-
   get userIsAuthenticated() {
     return this._user.asObservable().pipe(
       map((user) => {
         if (user) {
           return !!user.token;
+        } else {
+          return null;
+        }
+      })
+    );
+  }
+
+  get userId() {
+    return this._user.asObservable().pipe(
+      map((user) => {
+        if (user) {
+          return user.id;
         } else {
           return null;
         }
