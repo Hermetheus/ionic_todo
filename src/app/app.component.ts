@@ -1,6 +1,7 @@
+import { Subscription } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from './auth/auth.service';
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
 import { Plugins, Capacitor } from '@capacitor/core';
@@ -10,10 +11,12 @@ import { Plugins, Capacitor } from '@capacitor/core';
   templateUrl: 'app.component.html',
   styleUrls: ['app.component.scss'],
 })
-export class AppComponent {
+export class AppComponent implements OnInit, OnDestroy {
+  private authSub: Subscription;
+  private previousAuthState = false;
+
   constructor(
     private platform: Platform,
-
     private authService: AuthService,
     private router: Router
   ) {
@@ -28,8 +31,18 @@ export class AppComponent {
     });
   }
 
+  ngOnInit() {
+    this.authSub = this.authService.userIsAuthenticated.subscribe((isAuth) => {
+      if (!isAuth && this.previousAuthState !== isAuth) {
+        this.router.navigateByUrl('/auth');
+      }
+      this.previousAuthState = isAuth;
+    });
+  }
+
   onClick(event) {
     const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
+    // tslint:disable-next-line: deprecation
     systemDark.addListener(this.colorTest);
     if (event.detail.checked) {
       document.body.setAttribute('data-theme', 'dark');
@@ -48,6 +61,11 @@ export class AppComponent {
 
   onLogout() {
     this.authService.logout();
-    this.router.navigateByUrl('/auth');
+  }
+
+  ngOnDestroy() {
+    if (this.authSub) {
+      this.authSub.unsubscribe();
+    }
   }
 }
