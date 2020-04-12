@@ -4,7 +4,8 @@ import { AuthService } from './auth/auth.service';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 import { Platform } from '@ionic/angular';
-import { Plugins, Capacitor } from '@capacitor/core';
+import { Plugins, Capacitor, AppState } from '@capacitor/core';
+import { take } from 'rxjs/internal/operators/take';
 
 @Component({
   selector: 'app-root',
@@ -38,6 +39,11 @@ export class AppComponent implements OnInit, OnDestroy {
       }
       this.previousAuthState = isAuth;
     });
+
+    Plugins.App.addListener(
+      'appStateChange',
+      this.checkAuthOnResume.bind(this)
+    );
   }
 
   onClick(event) {
@@ -66,6 +72,18 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     if (this.authSub) {
       this.authSub.unsubscribe();
+    }
+  }
+  private checkAuthOnResume(state: AppState) {
+    if (state.isActive) {
+      this.authService
+        .autoLogin()
+        .pipe(take(1))
+        .subscribe((success) => {
+          if (!success) {
+            this.onLogout();
+          }
+        });
     }
   }
 }
