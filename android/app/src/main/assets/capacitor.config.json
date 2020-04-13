@@ -1,6 +1,6 @@
 {
-  "appId": "io.ionic.starter",
-  "appName": "booking_app",
+  "appId": "com.herm_booking_app",
+  "appName": "herm_booking_app",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",
